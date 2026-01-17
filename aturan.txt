@@ -1,0 +1,26 @@
+Paragraf 1 — Konsep Agentic
+AI agentic untuk dokumen perusahaan sebaiknya diposisikan sebagai Enterprise Document Writer dengan peran jelas, batasan ketat, dan workflow terkontrol. Agent tidak “berpikir bebas”, melainkan menjalankan tahapan terstruktur: validasi data → penentuan jenis dokumen → penyusunan struktur → penulisan narasi → finalisasi. Pendekatan ini membuat output konsisten, audit-friendly, dan aman untuk dokumen keuangan, operasional, serta manajemen.
+Paragraf 2 — LangChain vs Custom Agent
+LangChain boleh digunakan, tetapi bukan keharusan. Untuk use case dokumen perusahaan, custom agent berbasis FastAPI + prompt template sering lebih stabil dan mudah diaudit. LangChain cocok jika ingin multi-step reasoning, self-review, atau multi-agent (validator → writer → reviewer). Namun inti keberhasilan bukan framework, melainkan prompt role-based + guardrail backend yang mencegah AI mengubah data atau berimprovisasi.
+Paragraf 3 — Data & Guardrail
+Best practice utama adalah data terstruktur (JSON schema) dan guardrail keras. Semua perhitungan (keuangan, KPI) dilakukan di backend, bukan oleh AI. AI hanya menyusun narasi dan tabel berdasarkan data yang sudah tervalidasi. Dengan cara ini, risiko kesalahan angka, hallucination, dan inkonsistensi dapat dieliminasi.
+Paragraf 4 — Output & Rendering
+AI tidak boleh menghasilkan HTML langsung. Output AI sebaiknya Markdown atau plain text terstruktur. Rendering dokumen dilakukan oleh sistem menggunakan HTML template statis (Jinja2) + CSS standar, lalu dikonversi ke PDF (WeasyPrint / wkhtmltopdf). Pemisahan ini menjamin tampilan profesional, aman, dan konsisten antar dokumen.
+Paragraf 5 — Stack Ideal & Prinsip Inti
+Stack yang paling realistis adalah FastAPI + (LangChain opsional) + LLM + Markdown → HTML → PDF. Fokus utama bukan memilih model atau framework tercanggih, melainkan struktur dokumen yang baku, prompt yang disiplin, dan kontrol penuh di backend. Jika tiga hal ini kuat, AI agentic kamu akan siap dipakai di lingkungan perusahaan nyata.
+
+Berikut **ringkasan METODE PENGHEMATAN TOKEN** untuk **AI Agentic penulis dokumen perusahaan**, disusun **ringkas, praktis, dan siap dijadikan pedoman teknis**.
+
+---
+
+### Ringkasan Metode Penghematan Token AI Agentic
+
+Metode utama penghematan token adalah dengan **membatasi peran AI hanya pada penulisan bahasa**, bukan pada perhitungan, validasi, atau penyusunan struktur dokumen. Semua proses deterministik seperti kalkulasi keuangan, pembuatan tabel, penentuan struktur, dan layout PDF wajib ditangani oleh backend. AI hanya digunakan untuk menghasilkan narasi singkat seperti pendahuluan, analisis ringkas, dan kesimpulan.
+
+Penggunaan **prompt yang pendek dan statis** merupakan kunci efisiensi token. System prompt sebaiknya disimpan sekali sebagai konfigurasi aplikasi, bukan dikirim ulang pada setiap permintaan. Prompt pengguna cukup berisi ringkasan data yang sudah dipadatkan, bukan JSON mentah atau transaksi detail, sehingga konteks yang masuk ke AI tetap minimal namun informatif.
+
+Dokumen sebaiknya dihasilkan dengan **pendekatan per-bagian (micro-call)**, bukan satu panggilan besar. Setiap bagian seperti pendahuluan, analisis, dan kesimpulan dibuat melalui panggilan AI terpisah dengan batasan panjang yang jelas. Strategi ini memungkinkan perbaikan selektif tanpa perlu mengulang seluruh dokumen, sekaligus menekan penggunaan token secara signifikan.
+
+Pendekatan agentic yang kompleks seperti multi-agent, memory panjang, atau chain-of-thought sebaiknya dihindari untuk kasus dokumen perusahaan. Model AI kecil atau versi free sudah mencukupi karena kebutuhan utamanya adalah bahasa formal yang konsisten, bukan penalaran mendalam. Dengan desain stateless dan satu langkah, sistem menjadi lebih hemat token dan lebih mudah dikontrol.
+
+Terakhir, **caching hasil AI** harus diterapkan secara wajib. Jika data, periode, dan jenis dokumen tidak berubah, hasil AI disimpan dan digunakan kembali tanpa memanggil model. Dengan kombinasi pembatasan peran AI, prompt minimal, micro-call, model ringan, dan caching, AI agentic tetap fungsional, stabil, dan ekonomis meskipun menggunakan AI free atau token terbatas.
