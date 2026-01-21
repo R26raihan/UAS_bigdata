@@ -100,10 +100,33 @@ sequenceDiagram
 - **Output:** Dokumen Markdown/HTML berisi narasi strategis dan visualisasi matrix SWOT.
 
 ### 3.4 Alur Kerja Manajerial dan Generasi Dokumen
-1. **Data Selection:** Manajer memilih entitas dan rentang waktu.
-2. **Background Processing:** FastAPI melakukan orkestrasi panggilan asinkron.
-3. **Review & Edit:** Antarmuka editor untuk penyesuaian narasi.
-4. **Export:** Konversi ke format PDF/siap-cetak.
+Alur kerja yang diterapkan dirancang untuk meminimalkan beban kognitif manajer dalam penyusunan laporan melalui proses yang terotomatisasi secara end-to-end:
+
+**Diagram Alur Sekuensial Generasi Dokumen:**
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant F as Vue Frontend
+    participant B as FastAPI Backend
+    participant AI as AI Engine (LLM)
+    
+    U->>F: Pilih Perusahaan & Periode
+    F->>B: Cek Ketersediaan Data
+    B-->>F: Return Status (Quarterly Coverage)
+    U->>F: Klik "Generate AI Narrative"
+    F->>B: Request Analisis (POST /ai/generate)
+    B->>B: Kondensasi Data (Data Condensation)
+    B->>AI: Micro-calls per Section (Intro, Analysis, etc.)
+    AI-->>B: Return Narratives
+    B-->>F: Return Full AI Insights
+    F->>U: Tampilkan Laporan Final & Print PDF
+```
+
+Langkah-langkah detail alur kerja:
+1. **Data Selection:** Manajer memilih entitas perusahaan dan rentang waktu laporan melalui dashboard Vue.js. Sistem akan melakukan pengecekan ketersediaan data di database.
+2. **Background Processing:** FastAPI melakukan orkestrasi panggilan micro-calls ke LLM secara asinkron setelah melakukan kondensasi data (Data Condensation) untuk efisiensi token.
+3. **Review & Edit:** Sistem menyediakan antarmuka editor di mana manajer dapat melakukan penyesuaian pada narasi yang dihasilkan AI sebelum finalisasi.
+4. **Export:** Laporan dikonversi menjadi format PDF atau siap-cetak menggunakan mesin render dokumen profesional.
 
 ### 3.5 Integritas dan Validasi Data
 - **Schema Level:** Validasi ketat menggunakan Pydantic.
